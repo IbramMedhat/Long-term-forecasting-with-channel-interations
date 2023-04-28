@@ -10,7 +10,8 @@ class Model(nn.Module):
         super(Model, self).__init__()
         self.num_blocks = configs.num_blocks
         self.mixer_block = MixerBlock(configs.enc_in, configs.hidden_size,
-                                      configs.seq_len, configs.dropout, configs.activation)
+                                      configs.seq_len, configs.dropout,
+                                        configs.activation, configs.single_layer_mixer)
         self.channels = configs.enc_in
         self.pred_len = configs.pred_len
         #Individual layer for each variate(if true) otherwise, one shared linear
@@ -40,18 +41,22 @@ class Model(nn.Module):
 
     
 class MlpBlockFeatures(nn.Module):
-    """MLP for features with 2 layer"""
-    def __init__(self, channels, mlp_dim, dropout_factor, activation):
+    """MLP for features"""
+    def __init__(self, channels, mlp_dim, dropout_factor, activation, single_layer_mixer):
         super(MlpBlockFeatures, self).__init__()
         self.normalization_layer = nn.BatchNorm1d(channels)
-        self.linear_layer1 = nn.Linear(channels, mlp_dim)
-        if activation=="gelu" :
-            self.activation_layer = nn.GELU()
-        elif activation=="relu" :
-            self.activation_layer = nn.ReLU()
+        self.single_layer_mixer = single_layer_mixer
+        if self.single_layer_mixer :
+            self.linear_layer1 = nn.Linear(channels, channels)
         else :
-            self.activation_layer = None
-        self.linear_layer2 = nn.Linear(mlp_dim, channels)
+            self.linear_layer1 = nn.Linear(channels, mlp_dim)
+            if activation=="gelu" :
+                self.activation_layer = nn.GELU()
+            elif activation=="relu" :
+                self.activation_layer = nn.ReLU()
+            else :
+                self.activation_layer = None
+            self.linear_layer2 = nn.Linear(mlp_dim, channels)
         self.dropout_layer = nn.Dropout(dropout_factor)
 
     def forward(self, x) :
@@ -59,9 +64,10 @@ class MlpBlockFeatures(nn.Module):
         y = self.normalization_layer(y)
         y = torch.swapaxes(y, 1, 2)
         y = self.linear_layer1(y)
-        if self.activation_layer is not None :
-            y = self.activation_layer(y)
-        y = self.linear_layer2(y)
+        if not(self.single_layer_mixer) :
+            if self.activation_layer is not None :
+                y = self.activation_layer(y)
+            y = self.linear_layer2(y)
         y = self.dropout_layer(y)
         return x + y
     
@@ -84,14 +90,14 @@ class MlpBlockTimesteps(nn.Module):
     
 class MixerBlock(nn.Module):
     """Mixer block layer"""
-    def __init__(self, channels, features_block_mlp_dims, seq_len, dropout_factor, activation) :
+    def __init__(self, channels, features_block_mlp_dims, seq_len, dropout_factor, activation, single_layer_mixer) :
         super(MixerBlock, self).__init__()
         self.channels = channels
         self.seq_len = seq_len
         #Timesteps mixing block 
         self.timesteps_mixer = MlpBlockTimesteps(seq_len)
         #Features mixing block 
-        self.channels_mixer = MlpBlockFeatures(channels, features_block_mlp_dims, dropout_factor, activation)
+        self.channels_mixer = MlpBlockFeatures(channels, features_block_mlp_dims, dropout_factor, activation, single_layer_mixer)
     
     def forward(self, x) :
         y = self.timesteps_mixer(x)   
