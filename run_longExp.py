@@ -1,13 +1,15 @@
 import argparse
 import os
-import torch
-from exp.exp_main import Exp_Main
 import random
 import numpy as np
+import torch
+from exp.exp_main import Exp_Main
+
 
 fix_seed = 2021
 random.seed(fix_seed)
 torch.manual_seed(fix_seed)
+torch.autograd.set_detect_anomaly(True)
 np.random.seed(fix_seed)
 
 parser = argparse.ArgumentParser(description='Autoformer & Transformer family for Time Series Forecasting')
@@ -16,7 +18,7 @@ parser = argparse.ArgumentParser(description='Autoformer & Transformer family fo
 parser.add_argument('--is_training', type=int, required=True, default=1, help='status')
 parser.add_argument('--train_only', type=bool, required=False, default=False, help='perform training on full input dataset without validation and testing')
 parser.add_argument('--model_id', type=str, required=True, default='test', help='model id')
-parser.add_argument('--model', type=str, required=True, default='Autoformer',
+parser.add_argument('--model', type=str, required=True, default='TSMixer',
                     help='model name, options: [Autoformer, Informer, Transformer]')
 
 # data loader
@@ -60,6 +62,12 @@ parser.add_argument('--activation', type=str, default='gelu', help='activation')
 parser.add_argument('--output_attention', action='store_true', help='whether to output attention in ecoder')
 parser.add_argument('--do_predict', action='store_true', help='whether to predict unseen future data')
 
+# Mixers
+parser.add_argument('--num_blocks', type=int, default=3, help='number of mixer blocks to be used in TSMixer')
+parser.add_argument('--hidden_size', type=int, default=32, help='first dense layer diminsions for mlp features block')
+parser.add_argument('--mixer_output_linear_layer', type=int, default=5, help='dense layer diminsions for mlp timesteps block')
+parser.add_argument('--dropout_factor', type=float, default=0.5, help='dropout factor for hidden layer')
+
 # optimization
 parser.add_argument('--num_workers', type=int, default=10, help='data loader num workers')
 parser.add_argument('--itr', type=int, default=2, help='experiments times')
@@ -84,7 +92,7 @@ args = parser.parse_args()
 args.use_gpu = True if torch.cuda.is_available() and args.use_gpu else False
 
 if args.use_gpu and args.use_multi_gpu:
-    args.dvices = args.devices.replace(' ', '')
+    args.devices = args.devices.replace(' ', '')
     device_ids = args.devices.split(',')
     args.device_ids = [int(id_) for id_ in device_ids]
     args.gpu = args.device_ids[0]
@@ -148,7 +156,6 @@ else:
                                                                                                   args.des, ii)
 
     exp = Exp(args)  # set experiments
-
     if args.do_predict:
         print('>>>>>>>predicting : {}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'.format(setting))
         exp.predict(setting, True)
