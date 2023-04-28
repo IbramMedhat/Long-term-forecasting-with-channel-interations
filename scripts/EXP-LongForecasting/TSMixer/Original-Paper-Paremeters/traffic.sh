@@ -32,6 +32,8 @@ python3 -u run_longExp.py \
   --pred_len $pred_len \
   --enc_in $num_channels \
   --des 'Exp' \
+  --patience 5 \
+  --train_epochs 100 \
   --itr 1 --batch_size 32 --learning_rate 0.0001 >logs/LongForecasting/$model_name'/'$dataset'_'$seq_len'_'$pred_len.log 
 
 #Best configuration for traffic and 192 frames horizon
@@ -52,6 +54,8 @@ python3 -u run_longExp.py \
   --pred_len $pred_len \
   --enc_in $num_channels \
   --des 'Exp' \
+  --patience 5 \
+  --train_epochs 100 \
   --itr 1 --batch_size 32 --learning_rate 0.0001 >logs/LongForecasting/$model_name'/'$dataset'_'$seq_len'_'$pred_len.log 
 
 #Best configuration for traffic and 336 frames horizon
@@ -72,6 +76,8 @@ python3 -u run_longExp.py \
   --pred_len $pred_len \
   --enc_in $num_channels \
   --des 'Exp' \
+  --patience 5 \
+  --train_epochs 100 \
   --itr 1 --batch_size 32 --learning_rate 0.0001 >logs/LongForecasting/$model_name'/'$dataset'_'$seq_len'_'$pred_len.log 
 
 #Best configuration for traffic and 720 frames horizon
@@ -92,4 +98,6 @@ python3 -u run_longExp.py \
   --pred_len $pred_len \
   --enc_in $num_channels \
   --des 'Exp' \
+  --patience 5 \
+  --train_epochs 100 \
   --itr 1 --batch_size 32 --learning_rate 0.0001 >logs/LongForecasting/$model_name'/'$dataset'_'$seq_len'_'$pred_len.log 

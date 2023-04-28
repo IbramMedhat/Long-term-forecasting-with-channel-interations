@@ -61,22 +61,21 @@ class MlpBlockFeatures(nn.Module):
 
     def forward(self, x) :
         y = torch.swapaxes(x, 1, 2)
-        input_normalized = self.normalization_layer(y)
-        input_normalized = torch.swapaxes(input_normalized, 1, 2)
-        y = self.linear_layer1(input_normalized)
+        y = self.normalization_layer(y)
+        y = torch.swapaxes(y, 1, 2)
+        y = self.linear_layer1(y)
         if self.activation_layer is not None :
             y = self.activation_layer(y)
         if not(self.single_layer_mixer) :
             y = self.dropout_layer(y)
             y = self.linear_layer2(y)
         y = self.dropout_layer(y)
-        return input_normalized + y
+        return x + y
     
 class MlpBlockTimesteps(nn.Module):
     """MLP for timesteps with 1 layer"""
-    def __init__(self, seq_len, activation):
+    def __init__(self, seq_len, dropout_factor, activation):
         super(MlpBlockTimesteps, self).__init__()
-
         self.normalization_layer = nn.BatchNorm1d(seq_len)
         self.linear_layer = nn.Linear(seq_len, seq_len)
         if activation=="gelu" :
@@ -85,14 +84,17 @@ class MlpBlockTimesteps(nn.Module):
             self.activation_layer = nn.ReLU()
         else :
             self.activation_layer = None
+        self.dropout_layer = nn.Dropout(dropout_factor)
+
 
     def forward(self, x) :
-        input_normalized = self.normalization_layer(x)
-        y = torch.swapaxes(input_normalized, 1, 2)
+        y = self.normalization_layer(x)
+        y = torch.swapaxes(y, 1, 2)
         y = self.linear_layer(y)
         y = self.activation_layer(y)
+        y = self.dropout_layer(y)
         y = torch.swapaxes(y, 1, 2)
-        return input_normalized + y
+        return x + y
     
 class MixerBlock(nn.Module):
     """Mixer block layer"""
@@ -101,7 +103,7 @@ class MixerBlock(nn.Module):
         self.channels = channels
         self.seq_len = seq_len
         #Timesteps mixing block 
-        self.timesteps_mixer = MlpBlockTimesteps(seq_len, activation)
+        self.timesteps_mixer = MlpBlockTimesteps(seq_len, dropout_factor, activation)
         #Features mixing block 
         self.channels_mixer = MlpBlockFeatures(channels, features_block_mlp_dims, dropout_factor, activation, single_layer_mixer)
     

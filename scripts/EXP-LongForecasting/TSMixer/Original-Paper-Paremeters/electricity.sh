@@ -16,6 +16,9 @@ num_channels=321
 
 #Best configuration for electricity and 96 frames horizon
 pred_len=96
+approach = $model_name'_'$dataset'_'$seq_len'_'$pred_len
+# Running on cluster
+sbatch --job-name=$approach --error=logs/updatedInformerRun/$approach-%j.err --output=logs/updatedInformerRun/$approach-%j.log --mail-type=FAIL --mail-user=abdelamlak@uni-hildesheim.de --partition=STUD --gres=gpu:1 $scriptfile $model $approach $data $features $seq_len $label_len $pred_len
 python3 -u run_longExp.py \
   --activation 'relu' \
   --dropout 0.7\
@@ -32,10 +35,15 @@ python3 -u run_longExp.py \
   --pred_len $pred_len \
   --enc_in $num_channels \
   --des 'Exp' \
-  --itr 1 --batch_size 16 --learning_rate 0.0001 >logs/LongForecasting/$model_name'/'$dataset'_'$seq_len'_'$pred_len.log 
+  --patience 5 \
+  --train_epochs 100 \
+  --itr 1 --batch_size 32 --learning_rate 0.0001 >logs/LongForecasting/$model_name'/'$dataset'_'$seq_len'_'$pred_len.log 
 
 #Best configuration for electricity and 192 frames horizon
 pred_len=192
+approach = $model_name'_'$dataset'_'$seq_len'_'$pred_len
+# Running on cluster
+sbatch --job-name=$approach --error=logs/updatedInformerRun/$approach-%j.err --output=logs/updatedInformerRun/$approach-%j.log --mail-type=FAIL --mail-user=abdelamlak@uni-hildesheim.de --partition=STUD --gres=gpu:1 $scriptfile $model $approach $data $features $seq_len $label_len $pred_len
 python3 -u run_longExp.py \
   --activation 'relu' \
   --dropout 0.7\
@@ -52,10 +60,15 @@ python3 -u run_longExp.py \
   --pred_len $pred_len \
   --enc_in $num_channels \
   --des 'Exp' \
-  --itr 1 --batch_size 16 --learning_rate 0.0001 >logs/LongForecasting/$model_name'/'$dataset'_'$seq_len'_'$pred_len.log 
+  --patience 5 \
+  --train_epochs 100 \
+  --itr 1 --batch_size 32 --learning_rate 0.0001 >logs/LongForecasting/$model_name'/'$dataset'_'$seq_len'_'$pred_len.log 
 
 #Best configuration for electricity and 336 frames horizon
 pred_len=336
+approach = $model_name'_'$dataset'_'$seq_len'_'$pred_len
+# Running on cluster
+sbatch --job-name=$approach --error=logs/updatedInformerRun/$approach-%j.err --output=logs/updatedInformerRun/$approach-%j.log --mail-type=FAIL --mail-user=abdelamlak@uni-hildesheim.de --partition=STUD --gres=gpu:1 $scriptfile $model $approach $data $features $seq_len $label_len $pred_len
 python3 -u run_longExp.py \
   --activation 'relu' \
   --dropout 0.7\
@@ -72,10 +85,15 @@ python3 -u run_longExp.py \
   --pred_len $pred_len \
   --enc_in $num_channels \
   --des 'Exp' \
-  --itr 1 --batch_size 16 --learning_rate 0.0001 >logs/LongForecasting/$model_name'/'$dataset'_'$seq_len'_'$pred_len.log 
+  --patience 5 \
+  --train_epochs 100 \
+  --itr 1 --batch_size 32 --learning_rate 0.0001 >logs/LongForecasting/$model_name'/'$dataset'_'$seq_len'_'$pred_len.log 
 
 #Best configuration for electricity and 720 frames horizon
 pred_len=720
+approach = $model_name'_'$dataset'_'$seq_len'_'$pred_len
+# Running on cluster
+sbatch --job-name=$approach --error=logs/updatedInformerRun/$approach-%j.err --output=logs/updatedInformerRun/$approach-%j.log --mail-type=FAIL --mail-user=abdelamlak@uni-hildesheim.de --partition=STUD --gres=gpu:1 $scriptfile $model $approach $data $features $seq_len $label_len $pred_len
 python3 -u run_longExp.py \
   --activation 'relu' \
   --dropout 0.7\
@@ -92,4 +110,6 @@ python3 -u run_longExp.py \
   --pred_len $pred_len \
   --enc_in $num_channels \
   --des 'Exp' \
-  --itr 1 --batch_size 16 --learning_rate 0.001 >logs/LongForecasting/$model_name'/'$dataset'_'$seq_len'_'$pred_len.log 
+  --patience 5 \
+  --train_epochs 100 \
+  --itr 1 --batch_size 32 --learning_rate 0.001 >logs/LongForecasting/$model_name'/'$dataset'_'$seq_len'_'$pred_len.log 
