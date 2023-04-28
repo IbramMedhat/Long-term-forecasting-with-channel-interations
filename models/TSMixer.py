@@ -9,9 +9,10 @@ class Model(nn.Module):
     def __init__(self, configs):
         super(Model, self).__init__()
         self.num_blocks = configs.num_blocks
-        self.mixer_block = MixerBlock(configs.enc_in, configs.hidden_size, configs.seq_len, configs.dropout_factor)
+        self.mixer_block = MixerBlock(configs.enc_in, configs.hidden_size,
+                                      configs.seq_len, configs.dropout_factor)
         self.channels = configs.enc_in
-        self.pred_len = configs.pred_len 
+        self.pred_len = configs.pred_len
         #Individual layer for each variate(if true) otherwise, one shared linear
         self.individual_linear_layers = configs.individual
         if(self.individual_linear_layers) :
@@ -20,7 +21,6 @@ class Model(nn.Module):
                 self.output_linear_layers.append(nn.Linear(configs.seq_len, configs.pred_len))
         else :
             self.output_linear_layers = nn.Linear(configs.seq_len, configs.pred_len)
-            
     def forward(self, x):
         # x: [Batch, Input length, Channel]
         for _ in range(self.num_blocks):
@@ -29,12 +29,11 @@ class Model(nn.Module):
         x = torch.swapaxes(x, 1, 2)
         # #Preparing tensor output with the correct prediction length
         y = torch.zeros([x.size(0), x.size(1), self.pred_len],dtype=x.dtype).to(x.device)
-        for c in range(self.channels): 
-            if self.individual_linear_layers :
+        if self.individual_linear_layers :
+            for c in range(self.channels): 
                 y[:, c, :] = self.output_linear_layers[c](x[:, c, :].clone())
-            else :
-                y[:, c, :] = self.output_linear_layers(x[:, c, :].clone())
-
+        else :
+            y = self.output_linear_layers(x.clone())
         y = torch.swapaxes(y, 1, 2)
         return y
 
@@ -50,7 +49,9 @@ class MlpBlockFeatures(nn.Module):
         self.dropout_layer = nn.Dropout(dropout_factor)
 
     def forward(self, x) :
-        y = self.normalization_layer(x)
+        y = torch.swapaxes(x, 1, 2)
+        y = self.normalization_layer(y)
+        y = torch.swapaxes(y, 1, 2)
         y = self.linear_layer1(y)
         y = self.activation_layer(y)
         y = self.linear_layer2(y)
@@ -68,8 +69,10 @@ class MlpBlockTimesteps(nn.Module):
 
     def forward(self, x) :
         y = self.normalization_layer(x)
+        y = torch.swapaxes(y, 1, 2)
         y = self.linear_layer(y)
         y = self.activation_layer(y)
+        y = torch.swapaxes(y, 1, 2)
         return x + y
     
 class MixerBlock(nn.Module):
@@ -84,10 +87,6 @@ class MixerBlock(nn.Module):
         self.channels_mixer = MlpBlockFeatures(channels, features_block_mlp_dims, dropout_factor)
     
     def forward(self, x) :
-        y = torch.swapaxes(x, 1, 2)
-        for c in range(self.channels):
-            y[:, c, :] = self.timesteps_mixer(y[:, c, :].clone())    
-        y = torch.swapaxes(y, 1, 2)
-        for t in range(self.seq_len):
-            y[:, t, :] = self.channels_mixer(y[:, t, :].clone()) 
+        y = self.timesteps_mixer(x)   
+        y = self.channels_mixer(y)
         return y
