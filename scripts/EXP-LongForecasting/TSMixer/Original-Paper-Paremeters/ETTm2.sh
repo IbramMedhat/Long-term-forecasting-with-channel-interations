@@ -11,15 +11,16 @@ if [ ! -d "./logs/LongForecasting/TSMixer" ]; then
 fi
 seq_len=336
 model_name=TSMixer
-dataset=weather
-num_channels=21
+dataset=ETTm2
+num_channels=7
 
-#Best configuration for weather and 96 frames horizon
+#Best configuration for ETTm2 and 96 frames horizon
 pred_len=96
 python3 -u run_longExp.py \
-  --dropout_factor 0.3\
-  --hidden_size 32\
-  --num_blocks 4 \
+  --activation 'relu' \
+  --dropout 0.9\
+  --hidden_size 64\
+  --num_blocks 2 \
   --is_training 1 \
   --root_path ./dataset/ \
   --data_path $dataset.csv \
@@ -31,14 +32,15 @@ python3 -u run_longExp.py \
   --pred_len $pred_len \
   --enc_in $num_channels \
   --des 'Exp' \
-  --itr 1 --batch_size 32 --learning_rate 0.0001 >logs/LongForecasting/$model_name'/'$dataset'_'$seq_len'_'$pred_len.log 
+  --itr 1 --batch_size 32 --learning_rate 0.001 >logs/LongForecasting/$model_name'/'$dataset'_'$seq_len'_'$pred_len.log 
 
-#Best configuration for weather and 192 frames horizon
+#Best configuration for ETTm2 and 192 frames horizon
 pred_len=192
 python3 -u run_longExp.py \
-  --dropout_factor 0.7\
-  --hidden_size 8\
-  --num_blocks 6 \
+  --activation 'relu' \
+  --dropout 0.9\
+  --hidden_size 32\
+  --num_blocks 1 \
   --is_training 1 \
   --root_path ./dataset/ \
   --data_path $dataset.csv \
@@ -52,12 +54,13 @@ python3 -u run_longExp.py \
   --des 'Exp' \
   --itr 1 --batch_size 32 --learning_rate 0.0001 >logs/LongForecasting/$model_name'/'$dataset'_'$seq_len'_'$pred_len.log 
 
-#Best configuration for weather and 336 frames horizon
+#Best configuration for ETTm2 and 336 frames horizon
 pred_len=336
 python3 -u run_longExp.py \
-  --dropout_factor 0.7\
-  --hidden_size 8\
-  --num_blocks 4 \
+  --activation 'relu' \
+  --dropout 0.9\
+  --hidden_size 32\
+  --num_blocks 1 \
   --is_training 1 \
   --root_path ./dataset/ \
   --data_path $dataset.csv \
@@ -71,12 +74,13 @@ python3 -u run_longExp.py \
   --des 'Exp' \
   --itr 1 --batch_size 32 --learning_rate 0.0001 >logs/LongForecasting/$model_name'/'$dataset'_'$seq_len'_'$pred_len.log 
 
-#Best configuration for weather and 720 frames horizon
+#Best configuration for ETTm2 and 720 frames horizon
 pred_len=720
 python3 -u run_longExp.py \
-  --dropout_factor 0.7\
+  --activation 'relu' \
+  --dropout 0.1\
   --hidden_size 64\
-  --num_blocks 4 \
+  --num_blocks 2 \
   --is_training 1 \
   --root_path ./dataset/ \
   --data_path $dataset.csv \

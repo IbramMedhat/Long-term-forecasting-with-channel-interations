@@ -17,7 +17,8 @@ num_channels=321
 #Best configuration for electricity and 96 frames horizon
 pred_len=96
 python3 -u run_longExp.py \
-  --dropout_factor 0.7\
+  --activation 'relu' \
+  --dropout 0.7\
   --hidden_size 64\
   --num_blocks 4 \
   --is_training 1 \
@@ -36,7 +37,8 @@ python3 -u run_longExp.py \
 #Best configuration for electricity and 192 frames horizon
 pred_len=192
 python3 -u run_longExp.py \
-  --dropout_factor 0.7\
+  --activation 'relu' \
+  --dropout 0.7\
   --hidden_size 64\
   --num_blocks 4 \
   --is_training 1 \
@@ -55,7 +57,8 @@ python3 -u run_longExp.py \
 #Best configuration for electricity and 336 frames horizon
 pred_len=336
 python3 -u run_longExp.py \
-  --dropout_factor 0.7\
+  --activation 'relu' \
+  --dropout 0.7\
   --hidden_size 128\
   --num_blocks 6 \
   --is_training 1 \
@@ -74,7 +77,8 @@ python3 -u run_longExp.py \
 #Best configuration for electricity and 720 frames horizon
 pred_len=720
 python3 -u run_longExp.py \
-  --dropout_factor 0.7\
+  --activation 'relu' \
+  --dropout 0.7\
   --hidden_size 256\
   --num_blocks 8 \
   --is_training 1 \
