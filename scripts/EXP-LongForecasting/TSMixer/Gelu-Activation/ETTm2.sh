@@ -17,6 +17,7 @@ num_channels=7
 #Best configuration for ETTm2 and 96 frames horizon
 pred_len=96
 python3 -u run_longExp.py \
+  --activation 'gelu' \
   --dropout 0.9\
   --hidden_size 64\
   --num_blocks 2 \
@@ -36,6 +37,7 @@ python3 -u run_longExp.py \
 #Best configuration for ETTm2 and 192 frames horizon
 pred_len=192
 python3 -u run_longExp.py \
+  --activation 'gelu' \
   --dropout 0.9\
   --hidden_size 32\
   --num_blocks 1 \
@@ -55,6 +57,7 @@ python3 -u run_longExp.py \
 #Best configuration for ETTm2 and 336 frames horizon
 pred_len=336
 python3 -u run_longExp.py \
+  --activation 'gelu' \
   --dropout 0.9\
   --hidden_size 32\
   --num_blocks 1 \
@@ -74,6 +77,7 @@ python3 -u run_longExp.py \
 #Best configuration for ETTm2 and 720 frames horizon
 pred_len=720
 python3 -u run_longExp.py \
+  --activation 'gelu' \
   --dropout 0.1\
   --hidden_size 64\
   --num_blocks 2 \

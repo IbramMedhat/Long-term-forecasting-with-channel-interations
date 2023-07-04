@@ -11,8 +11,8 @@ if [ ! -d "./logs/LongForecasting/TSMixer" ]; then
 fi
 seq_len=336
 model_name=TSMixer
-dataset=ETTm2
-num_channels=7
+dataset=weather
+num_channels=21
 
 #Best configuration for ETTm2 and 96 frames horizon
 pred_len=96

@@ -11,13 +11,17 @@ if [ ! -d "./logs/LongForecasting/TSMixer" ]; then
 fi
 seq_len=336
 model_name=TSMixer
-dataset=ETTm2
-num_channels=7
+dataset=traffic
+num_channels=862
 
-#Best configuration for ETTm2 and 96 frames horizon
+#Best configuration for traffic and 96 frames horizon
 pred_len=96
 python3 -u run_longExp.py \
-  --single_layer_mixer true \
+  --train_epochs 15 \
+  --activation 'gelu' \
+  --dropout 0.7\
+  --hidden_size 64\
+  --num_blocks 8 \
   --is_training 1 \
   --root_path ./dataset/ \
   --data_path $dataset.csv \
@@ -29,12 +33,16 @@ python3 -u run_longExp.py \
   --pred_len $pred_len \
   --enc_in $num_channels \
   --des 'Exp' \
-  --itr 1 --batch_size 32 --learning_rate 0.001 >logs/LongForecasting/$model_name'/'$dataset'_'$seq_len'_'$pred_len'_singleLayer.log'
+  --itr 1 --batch_size 32 --learning_rate 0.0001 >logs/LongForecasting/$model_name'/'$dataset'_'$seq_len'_'$pred_len.log 
 
-#Best configuration for ETTm2 and 192 frames horizon
+#Best configuration for traffic and 192 frames horizon
 pred_len=192
 python3 -u run_longExp.py \
-  --single_layer_mixer true \
+  --train_epochs 15 \
+  --activation 'gelu' \
+  --dropout 0.7\
+  --hidden_size 64\
+  --num_blocks 8 \
   --is_training 1 \
   --root_path ./dataset/ \
   --data_path $dataset.csv \
@@ -46,12 +54,16 @@ python3 -u run_longExp.py \
   --pred_len $pred_len \
   --enc_in $num_channels \
   --des 'Exp' \
-  --itr 1 --batch_size 32 --learning_rate 0.0001 >logs/LongForecasting/$model_name'/'$dataset'_'$seq_len'_'$pred_len'_singleLayer.log'
+  --itr 1 --batch_size 32 --learning_rate 0.0001 >logs/LongForecasting/$model_name'/'$dataset'_'$seq_len'_'$pred_len.log 
 
-#Best configuration for ETTm2 and 336 frames horizon
+#Best configuration for traffic and 336 frames horizon
 pred_len=336
 python3 -u run_longExp.py \
-  --single_layer_mixer true \
+  --train_epochs 15 \
+  --activation 'gelu' \
+  --dropout 0.7\
+  --hidden_size 64\
+  --num_blocks 6 \
   --is_training 1 \
   --root_path ./dataset/ \
   --data_path $dataset.csv \
@@ -63,12 +75,16 @@ python3 -u run_longExp.py \
   --pred_len $pred_len \
   --enc_in $num_channels \
   --des 'Exp' \
-  --itr 1 --batch_size 32 --learning_rate 0.0001 >logs/LongForecasting/$model_name'/'$dataset'_'$seq_len'_'$pred_len'_singleLayer.log'
+  --itr 1 --batch_size 32 --learning_rate 0.0001 >logs/LongForecasting/$model_name'/'$dataset'_'$seq_len'_'$pred_len.log 
 
-#Best configuration for ETTm2 and 720 frames horizon
+#Best configuration for traffic and 720 frames horizon
 pred_len=720
 python3 -u run_longExp.py \
-  --single_layer_mixer true \
+  --activation 'gelu' \
+  --train_epochs 15 \
+  --dropout 0.9\
+  --hidden_size 64\
+  --num_blocks 8 \
   --is_training 1 \
   --root_path ./dataset/ \
   --data_path $dataset.csv \
@@ -80,4 +96,4 @@ python3 -u run_longExp.py \
   --pred_len $pred_len \
   --enc_in $num_channels \
   --des 'Exp' \
-  --itr 1 --batch_size 32 --learning_rate 0.0001 >logs/LongForecasting/$model_name'/'$dataset'_'$seq_len'_'$pred_len'_singleLayer.log'
+  --itr 1 --batch_size 32 --learning_rate 0.0001 >logs/LongForecasting/$model_name'/'$dataset'_'$seq_len'_'$pred_len.log 

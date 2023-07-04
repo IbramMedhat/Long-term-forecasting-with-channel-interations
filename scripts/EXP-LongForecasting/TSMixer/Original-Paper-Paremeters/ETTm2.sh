@@ -18,7 +18,6 @@ num_channels=7
 pred_len=96
 python3 -u run_longExp.py \
   --activation 'relu' \
-  --early_stopping false \
   --dropout 0.9\
   --hidden_size 64\
   --num_blocks 2 \
