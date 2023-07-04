@@ -71,16 +71,20 @@ parser.add_argument('--do_predict', action='store_true', help='whether to predic
 # Mixers
 parser.add_argument('--num_blocks', type=int, default=3, help='number of mixer blocks to be used in TSMixer')
 parser.add_argument('--hidden_size', type=int, default=32, help='first dense layer diminsions for mlp features block')
-parser.add_argument('--mixer_output_linear_layer', type=int, default=5, help='dense layer diminsions for mlp timesteps block')
 parser.add_argument('--single_layer_mixer', type=str2bool, nargs='?', default=False, help="if true a single layer mixers are used")
 
 #Common between Mixers and Transformer-based models
 parser.add_argument('--activation', type=str, choices={"gelu", "relu", "linear"}, default='gelu', help='activation')
-parser.add_argument('--dropout', type=float, default=0.05, help='dropout')
+parser.add_argument('--dropout', type=float, default=0.0, help='dropout')
 parser.add_argument('--early_stopping', type=str2bool, nargs='?',
                         const=True, default=True,
                         help="whether to include early stopping or not")
 parser.add_argument('--enc_in', type=int, default=7, help='encoder input size') # DLinear with --individual, use this hyperparameter as the number of channels
+
+# Patching and Convolution models
+parser.add_argument('--patch_size', type=int, default=16, help="Number of timesteps per patch")
+parser.add_argument('--kernel_size', type=int, default=1, help="conv width to cover certain number of timesteps")
+parser.add_argument('--stride', type=int, default=1, help='number of non-overlapping timesteps for conv operation')
 
 # optimization
 parser.add_argument('--num_workers', type=int, default=10, help='data loader num workers')

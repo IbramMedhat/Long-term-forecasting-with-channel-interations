@@ -81,16 +81,16 @@ class MlpBlockFeatures(nn.Module):
         self.dropout_layer = nn.Dropout(dropout_factor)
 
     def forward(self, x) :
-        y = torch.swapaxes(x, 1, 2)
-        y = self.normalization_layer(y)
-        y = torch.swapaxes(y, 1, 2)
-        y = self.linear_layer1(y)
+        normalized_input = torch.swapaxes(x, 1, 2)
+        normalized_input = self.normalization_layer(normalized_input)
+        normalized_input = torch.swapaxes(normalized_input, 1, 2)
+        y = self.linear_layer1(normalized_input)
         if not(self.single_layer_mixer) :
             if self.activation_layer is not None :
                 y = self.activation_layer(y)
             y = self.linear_layer2(y)
         y = self.dropout_layer(y)
-        return x + y
+        return normalized_input + y
     
 class MixerBlock(nn.Module):
     """Mixer block layer only mixing channels in this model"""
